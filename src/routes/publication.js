@@ -37,12 +37,15 @@ const mysqlConnection  = require('../coneccionDB.js');
                 data : [    
                     publicacion
                 ]
-
-              
               }
             );
       } else {
-        console.log(err);
+        res.json(
+          {
+              status: '0', 
+              message: 'Publicaciones no encontradas',
+            }
+          );
       }
     });  
   });
