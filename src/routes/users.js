@@ -69,7 +69,7 @@ router.post('/registrar_usuario_app', (req, res) => { //Pantalla secundaria - Re
     if(!err) {
       res.json({status: '1', msg: 'Registrado correctamente'});
     } else {
-      res.json({status: '0', msg: 'Error, no se ha podido registrar en la Base de datos'});
+      res.json({status: '0', msg: 'Error, no se ha podido registrar en la Base de datos usuario o email ya registrados'});
       console.log(err);
     }
   });
