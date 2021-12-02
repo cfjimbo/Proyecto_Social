@@ -7,11 +7,26 @@ router.get('/', (req, res) => {
 });
 
 router.get('/allstudents', (req, res) => {
-  mysqlConnection.query('SELECT * FROM cuenta_user', (err, rows, fields) => { //Consulta
+  mysqlConnection.query('SELECT * FROM estudiante', (err, rows, fields) => { //Consulta
     if(!err) {
       res.json(rows);
     } else {
       console.log(err);
+    }
+  });  
+});
+router.get('/carreras', (req, res) => {
+  mysqlConnection.query('SELECT * FROM carrera', (err, rows, fields) => { //Consulta
+    console.log(rows);
+    if(rows.length > 0){
+      res.json(
+        {status: '1', 
+        message: 'Carreras encontradas',
+        data : rows
+      }
+        );
+    }else{
+      res.json({status: '0', message: 'Usuario o contraseña incorrectos'});
     }
   });  
 });
@@ -22,7 +37,7 @@ router.get('/login_app', (req, res) => {
     let pass = req.query.pass;
     console.log(user);
     console.log(pass);
-    mysqlConnection.query('SELECT * FROM cuenta_user WHERE usuario = ? AND contrasena = ?', [user, pass], (err, rows, fields) => { // puede dar errores, filas o campos utilizados en la consulta
+    mysqlConnection.query('SELECT * FROM estudiante WHERE usuario = ? AND contrasena = ?', [user, pass], (err, rows, fields) => { // puede dar errores, filas o campos utilizados en la consulta
       console.log(rows, "Rows");
       if(rows.length > 0){
         res.json(
@@ -35,6 +50,8 @@ router.get('/login_app', (req, res) => {
             'usuario' : rows[0].usuario,
             'email' : rows[0].email,
             'token':  rows[0].token ? rows[0].token : '',
+            'modalidad':  rows[0].token ? rows[0].modalidad : '',
+            'idCarrera':  rows[0].token ? rows[0].idCarrera : '',
           }
         
         }
@@ -51,7 +68,7 @@ router.get('/login_app', (req, res) => {
 
 router.delete('/deletecuenta', (req, res) => {
   const { id } = req.params;
-  mysqlConnection.query('DELETE FROM cuenta_user WHERE usuario = ? AND contrasena = ?', [usuario, contrasena], (err, rows, fields) => {
+  mysqlConnection.query('DELETE FROM estudiante WHERE usuario = ? AND contrasena = ?', [usuario, contrasena], (err, rows, fields) => {
     if(!err) {
       res.json({status: 'Cuenta Eliminada'});
     } else {
@@ -62,10 +79,10 @@ router.delete('/deletecuenta', (req, res) => {
 
 // INSERT
 router.post('/registrar_usuario_app', (req, res) => { //Pantalla secundaria - Registro de formulario
-  const {nombre, apellido, usuario, contrasena, email} = req.body;
+  const {nombre, apellido, usuario, contrasena, email, idCarrera} = req.body;
   console.log(req.body);
-  mysqlConnection.query('INSERT INTO cuenta_user (nombre, apellido, usuario, contrasena, email) VALUES (?, ?, ?, ?, ?)', 
-  [nombre, apellido, usuario, contrasena, email], (err, rows, fields) => {
+  mysqlConnection.query('INSERT INTO estudiante (nombre, apellido, usuario, contrasena, email, idCarrera) VALUES (?, ?, ?, ?, ?, ?)', 
+  [nombre, apellido, usuario, contrasena, email, idCarrera], (err, rows, fields) => {
     if(!err) {
       res.json({status: '1', msg: 'Registrado correctamente'});
     } else {
@@ -78,7 +95,7 @@ router.post('/registrar_usuario_app', (req, res) => { //Pantalla secundaria - Re
 router.put('/updateform', (req, res) => { //Pantalla secundaria - Actualizar formulario
   const { nombre, apellido, usuario, contrasena, email} = req.body;
   const { id } = req.params;
-  mysqlConnection.query('INSERT INTO cuenta_user (nombre, apellido, usuario, contrasena, email) VALUES (?, ?, ?, ?, ?)', 
+  mysqlConnection.query('INSERT INTO estudiante (nombre, apellido, usuario, contrasena, email) VALUES (?, ?, ?, ?, ?)', 
   [nombre, apellido, usuario, contrasena, email], (err, rows, fields) => {
     if(!err) {
       res.json({status: 'Cuenta Actualizada'});
